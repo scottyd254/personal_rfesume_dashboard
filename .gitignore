@@ -1,0 +1,22 @@
+# ignore secrets.toml file
+.streamlit/
+
+# ignore pycache file
+**/__pycache__/
+
+# ignore all .ipynb files 
+*.ipynb
+
+# ignore the following .md files 
+population_metrics.md
+quotation_generator_simple.md
+
+# ignore resume_docs folder
+resume_docs/ 
+
+# ignore venv folder
+.venv/
+
+# ignore any .vscode files 
+.vscode/
+
