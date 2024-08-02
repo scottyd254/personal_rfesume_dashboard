@@ -8,9 +8,12 @@ import json
 
 @st.cache_data()
 def load_data():
-    df = pd.read_csv('datasets/kenya-population-distribution-2019-updated.csv')
-    gd = gpd.read_file('datasets/kenya-counties-geopandas-updated-merged.shp')
-    geo_json_file = 'datasets/kenya-counties-geopandas-geojson.json'
+    POP_DATASET = 'datasets/kenya-population-distribution-2019-updated.csv'
+    KENYA_GEO_SHP_FILE = 'datasets/kenya-counties-geopandas-updated-merged.shp'
+    GEO_JSON_FILE = 'datasets/kenya-counties-geopandas-geojson.json'
+    df = pd.read_csv(POP_DATASET)
+    gd = gpd.read_file(KENYA_GEO_SHP_FILE)
+    geo_json_file = GEO_JSON_FILE
     return df, gd,geo_json_file
 
 df, gd, geo_json_file = load_data()
