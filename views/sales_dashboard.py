@@ -14,6 +14,7 @@ def load_data():
 df = load_data()
 df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d')
 
+# AGE GROUP COLUMN VALUE BIN TRANSFORMATION
 min_age_group = df['Age'].min()-1
 max_age_group = df['Age'].max()
 
@@ -23,20 +24,23 @@ age_bins = [int(bin) for bin in bins]
 labels = [f'{bin[0]}-{bin[1]}' for bin in zip(age_bins, age_bins[1:])]
 df['Age Group'] = pd.cut(df['Age'], bins=age_bins, labels=labels)
 
+# CREATE COLUMN WITH REVENUE PER EACH UNIT OF SALES 
 df['Revenue Per Unit'] = df['Total Amount'] / df['Quantity']
 
 
-
+# PAGE TITLE HEADING
 st.title('📈Sales Dashboard')
 
 ## -- PAGE SETUP -- ##
 ## -- introduction --- ##
 st.markdown('---')
 
+## -- SIDEBAR SECTION --##
+## -- RADIO SELECT BUTTONS --##
 section = st.sidebar.radio('Go To',["Introduction", "Metrics", "Customer Insights", "Time-based Trends"])
 
 
-
+##-- SIDEBAR MULTISELECT FIELDS --##
 selected_categories = st.sidebar.multiselect(
     'Select Categories',
     df['Product Category'].unique(),
@@ -51,10 +55,11 @@ selected_gender = st.sidebar.multiselect(
 
 selected_age_group = st.sidebar.multiselect(
     'Select Age Group',
-    df['Age Group'].to_list(), 
-    default=df['Age Group'].cat.categories.tolist()
+    df['Age Group'].tolist(), 
+    default=df['Age Group'].cat.categories.to_list()
 )
 
+# selected categories display section 
 if selected_categories or selected_gender or selected_age_group:
     filtered_df = df.copy()
     
@@ -68,7 +73,9 @@ if selected_categories or selected_gender or selected_age_group:
         filtered_df = filtered_df[filtered_df['Age Group'].isin(selected_age_group)]
 else:
     filtered_df = df
-    
+
+# metrics section 
+# data metrics group by and aggregation of column fields 
 total_sales = filtered_df['Total Amount'].sum()
 total_quantity_sold = filtered_df['Quantity'].sum()
 average_sales = filtered_df['Total Amount'].mean()
@@ -78,6 +85,7 @@ total_avg_revenue_per_unit = filtered_df['Revenue Per Unit'].mean()
 avg_cum_sales = filtered_df['Total Amount'].sum() / number_of_transactions
 avg_monthly_sales = filtered_df['Total Amount'].sum() / 12
 
+# METRICS DISPLAY SECTION #
 def col_dashboard():
     col1, col2, col3 = st.columns(3, gap='small', vertical_alignment='top')
     with col1: 
@@ -94,7 +102,22 @@ def col_dashboard():
         st.metric(label="Avg Revenue Per Unit", value=f'${total_avg_revenue_per_unit:,.2f}')
         st.metric(label="Number of Transactions", value=f"{number_of_transactions:,}")
 
-    
+def selected_catergories_display():
+    selected_categories_str = ', '.join(str(x) for x in selected_categories)
+    selected_agegroup_str = ', '.join(str(x) for x in selected_age_group)
+    selected_gender_str = ', '.join(str(x) for x in selected_gender)
+    col1, col2, col3 = st.columns(3, gap='small', vertical_alignment='top')
+    with col1:
+        st.subheader(f'Selected Categories:')
+        st.write(f'{selected_categories_str}')
+    with col2:
+        st.subheader(f'selected gender:')
+        st.write(f'{selected_gender_str}')
+    with col3:
+        st.subheader(f'selected age-group:')
+        st.write(f'{selected_agegroup_str}')
+
+## -- CHART DISTRIBUTION --##
 def bar_chart_by_category():
     fig = px.bar(filtered_df,title="Total Sales by Category" ,x='Product Category', y='Total Amount', color='Product Category')
     return fig
@@ -152,8 +175,8 @@ def cumsum_sales_over_month():
     fig_cumulative_sales = px.line(cum_sales_over_time, x='Month', y='Cumulative Sales', title='Cumulative Sales Over Time')
     return fig_cumulative_sales
 
-
-    pass
+## -- LOAD SECTIONS TO PAGE -- ##
+    
 def load_section(section):
     if section == "Introduction":
         st.markdown(
@@ -175,6 +198,8 @@ def load_section(section):
         )
         col_dashboard()
         st.markdown('---')
+        selected_catergories_display()
+        st.markdown('---')
         
 
     elif section == "Customer Insights":
@@ -184,6 +209,8 @@ def load_section(section):
                 """
         )
         col_dashboard()
+        st.markdown('---')
+        selected_catergories_display()
         st.markdown('---')
         # bar chart of sales
         col1, col2 = st.columns(2, gap='small', vertical_alignment='top')
@@ -202,13 +229,11 @@ def load_section(section):
         )
         col_dashboard()
         st.markdown('---')
+        selected_catergories_display()
+        st.markdown('---')
         st.plotly_chart(sales_by_month())
         st.plotly_chart(sales_by_day_of_the_week())
         st.plotly_chart(cumsum_sales_over_month())
 
 load_section(section)
 
-
-## --- key metrics --- ##
-
-## -- col1: total sales --- ## ## -- col2: quantity sold --- ## ## -- col3: sales by category--- ##
