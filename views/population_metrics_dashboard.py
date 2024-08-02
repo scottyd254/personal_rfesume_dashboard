@@ -203,7 +203,7 @@ max_value = st.slider('Max Total Population', min_value=int(new_gd['Total'].min(
 
 filtered_bar_gd = new_gd[(new_gd['Total'] >= min_value) & (new_gd['Total'] <= max_value)]
 
-st.write(f'\nShowing results between: {f'{min_value:,}'} and {f'{max_value:,}'}')
+st.write(f'\nShowing results between: {min_value} and {max_value}')
 
 st.dataframe(
     filtered_bar_gd[['County','Male','Female','Intersex','Total','Percentage', 'PERIMETER', 'AREA']],
