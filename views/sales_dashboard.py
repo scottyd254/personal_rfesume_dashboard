@@ -4,7 +4,7 @@ import numpy as np
 import plotly.express as px
 from plotly.subplots import make_subplots
 
-csv_file = r'datasets\retail_sales_dataset.csv'
+csv_file = 'datasets\retail_sales_dataset.csv'
 @st.cache_data()
 def load_data(csv_file):
     df = pd.read_csv(csv_file, index_col= 0)
