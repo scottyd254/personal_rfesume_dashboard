@@ -4,13 +4,14 @@ import numpy as np
 import plotly.express as px
 from plotly.subplots import make_subplots
 
-csv_file = 'datasets\retail_sales_dataset.csv'
+
 @st.cache_data()
-def load_data(csv_file):
+def load_data():
+    csv_file = 'datasets/retail_sales_dataset.csv'
     df = pd.read_csv(csv_file, index_col= 0)
     return df
 
-df = load_data(csv_file)
+df = load_data()
 df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d')
 
 min_age_group = df['Age'].min()-1
