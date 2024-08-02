@@ -163,7 +163,9 @@ def sales_by_month():
     return fig_sales_over_time
 def sales_by_day_of_the_week():
     filtered_df['Date'] = pd.to_datetime(filtered_df['Date'])
-    filtered_df['Day of Week'] = filtered_df['Date'].dt.day_name().sort_values(ascending=False)
+    filtered_df['Day of Week'] = filtered_df['Date'].dt.day_name()
+    day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    filtered_df['Day of Week'] = pd.Categorical(filtered_df['Day of Week'], categories=day_order, ordered=True)
     sales_by_day_of_week = filtered_df.groupby('Day of Week')['Total Amount'].sum().reset_index()
     fig_sales_by_week = px.bar(sales_by_day_of_week, x='Day of Week', y='Total Amount', title='Sales by Day of the Week')
     
@@ -234,6 +236,7 @@ def load_section(section):
         st.plotly_chart(sales_by_month())
         st.plotly_chart(sales_by_day_of_the_week())
         st.plotly_chart(cumsum_sales_over_month())
+        st.dataframe(filtered_df)
 
 load_section(section)
 
