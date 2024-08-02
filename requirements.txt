@@ -4,4 +4,4 @@ plotly
 plotly-express
 matplotlib 
 geopandas
-json
+
