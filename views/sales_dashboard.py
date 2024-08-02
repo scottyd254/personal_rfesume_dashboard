@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from plotly.subplots import make_subplots
+from io import BytesIO
 
 
 @st.cache_data()
@@ -37,7 +38,7 @@ st.markdown('---')
 
 ## -- SIDEBAR SECTION --##
 ## -- RADIO SELECT BUTTONS --##
-section = st.sidebar.radio('Go To',["Introduction", "Metrics", "Customer Insights", "Time-based Trends"])
+section = st.sidebar.radio('Go To',["Introduction", "Metrics", "Customer Insights", "Time-based Trends", "Export to file"])
 
 
 ##-- SIDEBAR MULTISELECT FIELDS --##
@@ -161,6 +162,33 @@ def sales_by_month():
     sales_by_month = filtered_df.groupby('Month')['Total Amount'].sum().reset_index()
     fig_sales_over_time = px.line(sales_by_month, x='Month', y='Total Amount', title='Sales Over Time')
     return fig_sales_over_time
+
+## -- DOWNLOAD DATASET TO CSV OR EXCEL FILE -- ##
+def export_to_file():
+    csv_file = df.to_csv(index=False)
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as w:
+        df.to_excel(w, index=False, sheet_name='Yealy_Sales_Data')
+        w.close()
+    excel_file = output.getvalue()
+    st.dataframe(df)
+    col1, col2 = st.columns(2, vertical_alignment='top', gap='small')
+    with col1: 
+        st.download_button(
+            label="Download as CSV",
+            data = csv_file, 
+            file_name = "Sales_Dataset.csv",
+            mime="text/csv"
+        )
+    with col2:
+        st.download_button(
+            label="Download as Excel File",
+            data = excel_file,
+            file_name="Sales_Data.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    
+
 def sales_by_day_of_the_week():
     filtered_df['Date'] = pd.to_datetime(filtered_df['Date'])
     filtered_df['Day of Week'] = filtered_df['Date'].dt.day_name()
@@ -236,7 +264,9 @@ def load_section(section):
         st.plotly_chart(sales_by_month())
         st.plotly_chart(sales_by_day_of_the_week())
         st.plotly_chart(cumsum_sales_over_month())
-        st.dataframe(filtered_df)
+        
+    elif section == "Export to file":
+        export_to_file()
 
 load_section(section)
 
