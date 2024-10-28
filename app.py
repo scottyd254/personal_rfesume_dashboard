@@ -41,7 +41,7 @@ pg = st.navigation(
        'Projects': [population_metrics_dashboard_page, sales_dashboard_page, image_to_text],
    }
         )
-st.logo('assets/logo1.png', link='https://github.com/scotty_254')
+st.logo('assets/logo1.png', link='https://github.com/scottyd254/personal_rfesume_dashboard')
 st.sidebar.write('By scotty_254')
 st.components.v1.html(component)
 
